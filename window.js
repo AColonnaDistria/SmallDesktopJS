@@ -1,54 +1,65 @@
 var allWindows = []; // by order
 
-var window1 = document.getElementById("window1");
-var window2 = document.getElementById("window2");
+var window1 = createWindow("Hello", "#181818")
+var window2 = createWindow("World", "#181818");
+var window3 = createWindow("Dark", "#181818");
 
-allWindows.push(window1);
-allWindows.push(window2);
+resetOrder();
 
-window1.style.backgroundColor = "red";
-window2.style.backgroundColor = "blue";
+function setWindowEvent(window) {
+    let state = "UP";
+    let x_down;
+    let y_down;
 
-resetWindowOrder();
-setWindowEvents();
+    let x_offset;
+    let y_offset;
 
-function setWindowEvents() {
-    for (let window of document.getElementsByClassName("window")) {
-        let state = "UP";
-        let x_down;
-        let y_down;
+    window.addEventListener("mousedown", (event) => {
+        state = "DOWN";
 
-        let x_offset;
-        let y_offset;
+        x_down = event.clientX;
+        y_down = event.clientY;
 
-        window.addEventListener("mousedown", (event) => {
-            state = "DOWN";
+        x_offset = parseInt(window.style.left) || 0;
+        y_offset = parseInt(window.style.top) || 0;
 
-            x_down = event.clientX;
-            y_down = event.clientY;
+        setFocus(window);
+    });
 
-            x_offset = parseInt(window.style.left) || 0;
-            y_offset = parseInt(window.style.top) || 0;
+    window.addEventListener("mousemove", (event) => {
+        if (state == "DOWN") {
+            console.log("move");
+            window.style.left = `${x_offset + (event.clientX - x_down)}px`;
+            window.style.top = `${y_offset + (event.clientY - y_down)}px`;
+        }
+    });
 
-            setFocus(event.target);
-        });
+    document.addEventListener("mouseup", (event) => {
+        state = "UP";
+    });
 
-        window.addEventListener("mousemove", (event) => {
-            if (state == "DOWN") {
-                console.log("move");
-                event.target.style.left = `${x_offset + (event.clientX - x_down)}px`;
-                event.target.style.top = `${y_offset + (event.clientY - y_down)}px`;
-            }
-        });
+    document.addEventListener("mouseleave", (event) => {
+        state = "UP";
+    });
+}
 
-        document.addEventListener("mouseup", (event) => {
-            state = "UP";
-        });
+function createWindow(title, color) {
+    let window = document.createElement("div");
+    window.classList.add("window");
 
-        document.addEventListener("mouseleave", (event) => {
-            state = "UP";
-        });
-    }
+    let windowHeaderBar = document.createElement("div");
+    windowHeaderBar.classList.add("window-header-bar", "prevent-select");
+    windowHeaderBar.textContent = title;
+
+    window.appendChild(windowHeaderBar);
+    window.style.backgroundColor = color;
+    
+    setWindowEvent(window);
+
+    document.body.appendChild(window);
+    allWindows.push(window);
+    
+    return window;
 }
 
 function setFocus(window) {
@@ -57,10 +68,10 @@ function setFocus(window) {
 
     console.log(allWindows);
 
-    resetWindowOrder();
+    resetOrder();
 }
 
-function resetWindowOrder() {
+function resetOrder() {
     for (let i = 0; i < allWindows.length; ++i) {
         allWindows[i].style.zIndex = `${100 + i}`
     }

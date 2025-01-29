@@ -11,6 +11,8 @@ body {
     width: 100%;
     height: 100%;
 
+    font-family: sans-serif;
+
     margin: 0;
 }
 
@@ -20,6 +22,12 @@ header {
 
     height: 1.5em;
     align-items: center;
+}
+
+.prevent-select {
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none; /* IE 10 and IE 11 */
+    user-select: none; /* Standard syntax */
 }
 
 .row-box {
@@ -45,4 +53,21 @@ header {
 
     width: 300px;
     height: 300px;
+
+    border-radius: 2%;
+    border: solid 1px #202020;
+
+    color: white;
+}
+
+.window-header-bar {
+    position: absolute;
+
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 1.5em;
+
+    text-align: center;
 }
