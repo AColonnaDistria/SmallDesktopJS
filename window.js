@@ -2,14 +2,11 @@ var currentWorkspace = 0;
 var numberOfWorkspaces = 3;
 
 var allWindows = []; // by workspace, by order
-initWindowsStack();
 
-var window1 = createWindow("Hello", "#181818")
-var window2 = createWindow("World", "#181818");
-var window3 = createWindow("Dark", "#181818");
-var window4 = createWindow("Workspace2", "red", 1);
-
-resetOrder();
+export function initWindows() {
+    initWindowsStack();
+    resetOrder();
+}
 
 function initWindowsStack() {
     for (let workspace = 0; workspace < numberOfWorkspaces; ++workspace) {
@@ -18,6 +15,7 @@ function initWindowsStack() {
     }
 }
 
+var currentWindowsDragged = null;
 function setWindowEvent(window) {
     let state = "UP";
     let x_down;
@@ -35,27 +33,33 @@ function setWindowEvent(window) {
         x_offset = parseInt(window.style.left) || 0;
         y_offset = parseInt(window.style.top) || 0;
 
+        currentWindowsDragged = window;
         setFocus(window);
     });
 
-    window.addEventListener("mousemove", (event) => {
-        if (state == "DOWN") {
-            console.log("move");
+    document.addEventListener("mousemove", (event) => {
+        if (state == "DOWN" && currentWindowsDragged == window) {
             window.style.left = `${x_offset + (event.clientX - x_down)}px`;
             window.style.top = `${y_offset + (event.clientY - y_down)}px`;
         }
     });
 
     document.addEventListener("mouseup", (event) => {
-        state = "UP";
+        setTimeout(() => {
+            currentWindowsDragged = null;
+            state = "UP";
+        }, 200);
     });
 
     document.addEventListener("mouseleave", (event) => {
-        state = "UP";
+        setTimeout(() => {
+            currentWindowsDragged = null;
+            state = "UP";
+        }, 200);
     });
 }
 
-function createWindow(title, color, workspace = currentWorkspace) {
+export function createWindow(title, color, workspace = currentWorkspace) {
     let window = document.createElement("div");
     window.classList.add("window");
 
@@ -74,6 +78,8 @@ function createWindow(title, color, workspace = currentWorkspace) {
 
     document.body.appendChild(window);
     allWindows[workspace].push(window);
+
+    setFocus(window);
     
     return window;
 }
@@ -101,7 +107,7 @@ function showWindow(window) {
     window.style.visibility = "visible";
 }
 
-function changeWorkspace(newWorkspace) {
+export function changeWorkspace(newWorkspace) {
     for (let window of allWindows[currentWorkspace]) {
         hideWindow(window);
     }

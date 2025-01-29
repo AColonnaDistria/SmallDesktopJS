@@ -7,29 +7,35 @@
 
         <script defer src="http://localhost:8888/files/index.js" type="module"></script>
         <script defer src="http://localhost:8888/files/window.js" type="module"></script>
+        <script defer src="http://localhost:8888/files/dock.js" type="module"></script>
     </head>
-    <body>
-        <header>
-            <div class="row-box">
-                <div class="workspace-indicators-group">
-                    <!--
-                    <button class="virtual-desktop-indicator">
-                        1
-                    </button>
-                    <button class="virtual-desktop-indicator">
-                        2
-                    </button>
-                    <button class="virtual-desktop-indicator">
-                        3
-                    </button>
-                    -->
-                </div>
-                <div class="date-group">
-                    <button class="date-button">
-                        Jan 29 00:48
-                    </button>
-                </div>
+    <header>
+        <div class="row-box">
+            <div class="workspace-indicators-group">
+                <!--
+                <button class="workspace-indicator">
+                    1
+                </button>
+                <button class="workspace-indicator">
+                    2
+                </button>
+                <button class="workspace-indicator">
+                    3
+                </button>
+                -->
             </div>
-        </header>
+            <div class="date-group">
+                <button class="date-button">
+                    Jan 29 00:48
+                </button>
+            </div>
+        </div>
+    </header>
+    <body>
+        <div class="row-box dock">
+            <button class="dock-button" id="dockButtonNewWindow">
+                Add
+            </button>
+        </div>
     </body>
 </html>

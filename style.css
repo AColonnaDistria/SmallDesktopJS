@@ -17,11 +17,16 @@ body {
 }
 
 header {
+    position: relative;
+
     background-color: black;
     color: white;
 
     height: 1.5em;
     align-items: center;
+
+    z-index: 500;
+    opacity: 85%;
 }
 
 .prevent-select {
@@ -61,6 +66,30 @@ header {
     color: white;
 }
 
+.workspace-indicator {
+    background-color: black;
+    border-style: solid 0px;
+    box-shadow: none;
+    border: 0;
+    color: white;
+}
+
+.workspace-indicator:hover {
+    background-color: gray;
+}
+
+.date-button {
+    background-color: black;
+    border-style: solid 0px;
+    box-shadow: none;
+    border: 0;
+    color: white;
+}
+
+.date-button:hover {
+    background-color: gray;
+}
+
 .window-header-bar {
     position: absolute;
 
@@ -71,4 +100,48 @@ header {
     height: 1.5em;
 
     text-align: center;
+}
+
+.dock {
+    position: absolute;
+
+    left: 50%;
+    bottom: 15px;
+
+    width: 50%;
+    height: 5em;
+
+    border-radius: 20px;
+
+    transform: translateX(-50%);
+
+    background-color: #202020;
+
+    z-index: 500;
+    opacity: 80%;
+}
+
+.dock-button {
+    position: relative;
+
+    margin-left: 15px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+
+    width: 5em;
+    height: 5em;
+
+    background-color: #303030;
+    border-style: solid 0px;
+    box-shadow: none;
+    border: 0;
+    color: white;
+
+    border-radius: 5px;
+
+    opacity: 80%;
+}
+
+.dock-button:hover {
+    background-color: gray;
 }
