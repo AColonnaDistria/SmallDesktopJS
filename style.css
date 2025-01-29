@@ -56,6 +56,7 @@ header {
 
     border-radius: 2%;
     border: solid 1px #202020;
+    box-shadow: 2px 2px 2px #202020;
 
     color: white;
 }
