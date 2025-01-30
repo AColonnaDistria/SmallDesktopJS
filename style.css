@@ -63,6 +63,8 @@ header {
     border: none;
 
     background-color: magenta;
+
+    user-select: none;
 }
 
 .window-resize-zone-top {
@@ -72,6 +74,8 @@ header {
     height: 10px;
 
     background-color: red;
+
+    user-select: none;
 }
 
 .window-resize-zone-top:hover {
@@ -87,6 +91,8 @@ header {
     height: 10px;
 
     background-color: green;
+
+    user-select: none;
 }
 
 .window-resize-zone-bottom:hover {
@@ -100,6 +106,8 @@ header {
     height: 100%;
 
     background-color: blue;
+
+    user-select: none;
 }
 
 .window-resize-zone-left:hover {
@@ -115,6 +123,8 @@ header {
     height: 100%;
 
     background-color: yellow;
+
+    user-select: none;
 }
 
 .window-resize-zone-right:hover {
@@ -143,6 +153,8 @@ header {
     height: 10px;
 
     background-color: orange;
+
+    user-select: none;
 }
 
 .window-resize-zone-top-right-corner:hover {
@@ -158,6 +170,8 @@ header {
     height: 10px;
 
     background-color: orange;
+
+    user-select: none;
 }
 
 .window-resize-zone-bottom-left-corner:hover {
@@ -174,6 +188,8 @@ header {
     height: 10px;
 
     background-color: orange;
+
+    user-select: none;
 }
 
 .window-resize-zone-bottom-right-corner:hover {
@@ -194,6 +210,8 @@ header {
     border-radius: 2%;
     border: solid 1px #202020;
     box-shadow: 2px 2px 2px #202020;
+
+    user-select: none;
 
     color: white;
 }

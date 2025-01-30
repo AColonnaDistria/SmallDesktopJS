@@ -15,8 +15,7 @@ function initWindowsStack() {
     }
 }
 
-var currentWindowsDragged = null;
-var currentWindowsResized = null;
+var currentWindow = null;
 
 export function createWindow(title, color, workspace = currentWorkspace) {
     let window = document.createElement("div");
@@ -68,9 +67,7 @@ export function createWindow(title, color, workspace = currentWorkspace) {
     let width;
     let height;
 
-    // Left event
-    windowResizeZoneLeft.addEventListener("mousedown", (event) => {
-        console.log("left");
+    function resizeDown(event) {
         x_down = event.clientX;
         y_down = event.clientY;
 
@@ -80,61 +77,45 @@ export function createWindow(title, color, workspace = currentWorkspace) {
         width = windowContent.offsetWidth;
         height = windowContent.offsetHeight;
 
-        state = "RESIZE_LEFT";
+        currentWindow = window;
 
-        currentWindowsResized = window;
         setFocus(window);
+    }
+
+    function mouseQuit() {        
+        setTimeout(() => {
+            currentWindow = null;
+            state = "UP";
+        }, 200);
+    }
+
+    // Left event
+    windowResizeZoneLeft.addEventListener("mousedown", (event) => {
+        console.log("left");
+
+        resizeDown(event);
+        state = "RESIZE_LEFT";
     });
 
     windowResizeZoneRight.addEventListener("mousedown", (event) => {
         console.log("right");
-        x_down = event.clientX;
-        y_down = event.clientY;
-
-        x_offset = parseInt(window.style.left) || 0;
-        y_offset = parseInt(window.style.top) || 0;
-
-        width = windowContent.offsetWidth;
-        height = windowContent.offsetHeight;
-
+       
+        resizeDown(event);
         state = "RESIZE_RIGHT";
-
-        currentWindowsResized = window;
-        setFocus(window);
     });
 
     windowResizeZoneTop.addEventListener("mousedown", (event) => {
         console.log("top");
-        x_down = event.clientX;
-        y_down = event.clientY;
-
-        x_offset = parseInt(window.style.left) || 0;
-        y_offset = parseInt(window.style.top) || 0;
-
-        width = windowContent.offsetWidth;
-        height = windowContent.offsetHeight;
-
+        
+        resizeDown(event);
         state = "RESIZE_TOP";
-
-        currentWindowsResized = window;
-        setFocus(window);
     });
 
     windowResizeZoneBottom.addEventListener("mousedown", (event) => {
         console.log("bottom");
-        x_down = event.clientX;
-        y_down = event.clientY;
-
-        x_offset = parseInt(window.style.left) || 0;
-        y_offset = parseInt(window.style.top) || 0;
-
-        width = windowContent.offsetWidth;
-        height = windowContent.offsetHeight;
-
+        
+        resizeDown(event);
         state = "RESIZE_BOTTOM";
-
-        currentWindowsResized = window;
-        setFocus(window);
     });
 
     windowContent.addEventListener("mousedown", (event) => {
@@ -146,57 +127,57 @@ export function createWindow(title, color, workspace = currentWorkspace) {
 
         state = "DOWN";
 
-        currentWindowsDragged = window;
+        currentWindow = window;
         setFocus(window);
     });
 
     document.addEventListener("mousemove", (event) => {
-        if (state == "DOWN" && currentWindowsDragged == window) {
-            window.style.left = `${x_offset + (event.clientX - x_down)}px`;
-            window.style.top = `${y_offset + (event.clientY - y_down)}px`;
-        }
-        else if (state == "RESIZE_LEFT" && currentWindowsResized == window) {
-            const deltaX = event.clientX - x_down; // Change in mouse X position
-            const newLeft = x_offset + deltaX;
-            const newWidth = width - deltaX;
-            
-            window.style.left = `${newLeft}px`;
-            windowContent.style.width = `${newWidth}px`;
-        }
-        else if (state == "RESIZE_RIGHT" && currentWindowsResized == window) {
-            const deltaX = event.clientX - x_down; // Change in mouse X position
-            const newWidth = width + deltaX;
-            
-            windowContent.style.width = `${newWidth}px`;
-        }
-        else if (state == "RESIZE_TOP" && currentWindowsResized == window) {
-            const deltaY = event.clientY - y_down; // Change in mouse X position
-            const newTop = y_offset + deltaY;
-            const newHeight = height - deltaY;
-            
-            window.style.top = `${newTop}px`;
-            windowContent.style.height = `${newHeight}px`;
-        }
-        else if (state == "RESIZE_BOTTOM" && currentWindowsResized == window) {
-            const deltaY = event.clientY - y_down; // Change in mouse X position
-            const newHeight = height + deltaY;
-
-            windowContent.style.height = `${newHeight}px`;
+        if (currentWindow == window) {
+            if (event.buttons != 1) {
+                mouseQuit();
+            }
+            if (state == "DOWN") {
+                window.style.left = `${x_offset + (event.clientX - x_down)}px`;
+                window.style.top = `${y_offset + (event.clientY - y_down)}px`;
+            }
+            else if (state.startsWith("RESIZE")) {
+                const deltaX = event.clientX - x_down;
+                const deltaY = event.clientY - y_down;
+    
+                if (state == "RESIZE_LEFT") {
+                    const newLeft = x_offset + deltaX;
+                    const newWidth = width - deltaX;
+                    
+                    window.style.left = `${newLeft}px`;
+                    windowContent.style.width = `${newWidth}px`;
+                }
+                else if (state == "RESIZE_RIGHT") {            
+                    const newWidth = width + deltaX;
+                
+                    windowContent.style.width = `${newWidth}px`;
+                }
+                else if (state == "RESIZE_TOP") {            
+                    const newTop = y_offset + deltaY;
+                    const newHeight = height - deltaY;
+                    
+                    window.style.top = `${newTop}px`;
+                    windowContent.style.height = `${newHeight}px`;
+                }
+                else if (state == "RESIZE_BOTTOM") {            
+                    const newHeight = height + deltaY;
+    
+                    windowContent.style.height = `${newHeight}px`;
+                }
+            }
         }
     });
 
     document.addEventListener("mouseup", (event) => {
-        setTimeout(() => {
-            currentWindowsDragged = null;
-            state = "UP";
-        }, 200);
+        mouseQuit();
     });
 
     document.addEventListener("mouseleave", (event) => {
-        setTimeout(() => {
-            currentWindowsDragged = null;
-            state = "UP";
-        }, 200);
+        mouseQuit();
     });
 
     if (workspace != currentWorkspace) {
