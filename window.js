@@ -118,6 +118,35 @@ export function createWindow(title, color, workspace = currentWorkspace) {
         state = "RESIZE_BOTTOM";
     });
 
+    // Corners
+    windowResizeZoneTopLeftCorner.addEventListener("mousedown", (event) => {
+        console.log("top-left");
+        
+        resizeDown(event);
+        state = "RESIZE_TOP_LEFT";
+    });
+
+    windowResizeZoneTopRightCorner.addEventListener("mousedown", (event) => {
+        console.log("top-right");
+        
+        resizeDown(event);
+        state = "RESIZE_TOP_RIGHT";
+    });
+
+    windowResizeZoneBottomLeftCorner.addEventListener("mousedown", (event) => {
+        console.log("bottom-left");
+        
+        resizeDown(event);
+        state = "RESIZE_BOTTOM_LEFT";
+    });
+
+    windowResizeZoneBottomRightCorner.addEventListener("mousedown", (event) => {
+        console.log("bottom-right");
+        
+        resizeDown(event);
+        state = "RESIZE_BOTTOM_RIGHT";
+    });
+
     windowContent.addEventListener("mousedown", (event) => {
         x_down = event.clientX;
         y_down = event.clientY;
@@ -143,30 +172,62 @@ export function createWindow(title, color, workspace = currentWorkspace) {
             else if (state.startsWith("RESIZE")) {
                 const deltaX = event.clientX - x_down;
                 const deltaY = event.clientY - y_down;
-    
-                if (state == "RESIZE_LEFT") {
+
+                function resizeLeft() {
                     const newLeft = x_offset + deltaX;
                     const newWidth = width - deltaX;
                     
                     window.style.left = `${newLeft}px`;
                     windowContent.style.width = `${newWidth}px`;
                 }
-                else if (state == "RESIZE_RIGHT") {            
+
+                function resizeRight() {
                     const newWidth = width + deltaX;
                 
                     windowContent.style.width = `${newWidth}px`;
                 }
-                else if (state == "RESIZE_TOP") {            
+
+                function resizeTop() {
                     const newTop = y_offset + deltaY;
                     const newHeight = height - deltaY;
                     
                     window.style.top = `${newTop}px`;
                     windowContent.style.height = `${newHeight}px`;
                 }
-                else if (state == "RESIZE_BOTTOM") {            
+
+                function resizeBottom() {
                     const newHeight = height + deltaY;
     
                     windowContent.style.height = `${newHeight}px`;
+                }
+    
+                if (state == "RESIZE_LEFT") {
+                    resizeLeft();
+                }
+                else if (state == "RESIZE_RIGHT") {            
+                    resizeRight();
+                }
+                else if (state == "RESIZE_TOP") {          
+                    resizeTop();  
+                }
+                else if (state == "RESIZE_BOTTOM") {     
+                    resizeBottom();       
+                }
+                else if (state == "RESIZE_TOP_LEFT") {
+                    resizeTop();
+                    resizeLeft();
+                }
+                else if (state == "RESIZE_TOP_RIGHT") {
+                    resizeTop();
+                    resizeRight();
+                }
+                else if (state == "RESIZE_BOTTOM_LEFT") {
+                    resizeBottom();
+                    resizeLeft();
+                }
+                else if (state == "RESIZE_BOTTOM_RIGHT") {
+                    resizeBottom();
+                    resizeRight();
                 }
             }
         }
