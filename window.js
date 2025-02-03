@@ -161,6 +161,9 @@ export function createWindow(title, color, workspace = currentWorkspace) {
     });
 
     document.addEventListener("mousemove", (event) => {
+        const minWidth = 100;   // Min width in pixels
+        const minHeight = 100;  // Min height in pixels
+
         if (currentWindow == window) {
             if (event.buttons != 1) {
                 mouseQuit();
@@ -175,28 +178,28 @@ export function createWindow(title, color, workspace = currentWorkspace) {
 
                 function resizeLeft() {
                     const newLeft = x_offset + deltaX;
-                    const newWidth = width - deltaX;
+                    const newWidth = Math.max(width - deltaX, minWidth);
                     
                     window.style.left = `${newLeft}px`;
                     windowContent.style.width = `${newWidth}px`;
                 }
 
                 function resizeRight() {
-                    const newWidth = width + deltaX;
+                    const newWidth = Math.max(width + deltaX, minWidth);
                 
                     windowContent.style.width = `${newWidth}px`;
                 }
 
                 function resizeTop() {
                     const newTop = y_offset + deltaY;
-                    const newHeight = height - deltaY;
+                    const newHeight = Math.max(height - deltaY, minHeight);
                     
                     window.style.top = `${newTop}px`;
                     windowContent.style.height = `${newHeight}px`;
                 }
 
                 function resizeBottom() {
-                    const newHeight = height + deltaY;
+                    const newHeight = Math.max(height + deltaY, minHeight);
     
                     windowContent.style.height = `${newHeight}px`;
                 }
