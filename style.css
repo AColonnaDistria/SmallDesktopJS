@@ -121,7 +121,7 @@ header {
     cursor: e-resize;
 }
 
-.window-resize-zone-top-left-corner {
+.window-resize-zone-top-left {
     position: absolute;
 
     width: 10px;
@@ -130,11 +130,11 @@ header {
     user-select: none;
 }
 
-.window-resize-zone-top-left-corner:hover {
+.window-resize-zone-top-left:hover {
     cursor: nw-resize;
 }
 
-.window-resize-zone-top-right-corner {
+.window-resize-zone-top-right {
     position: absolute;
 
     right: 0;
@@ -145,11 +145,11 @@ header {
     user-select: none;
 }
 
-.window-resize-zone-top-right-corner:hover {
+.window-resize-zone-top-right:hover {
     cursor: ne-resize;
 }
 
-.window-resize-zone-bottom-left-corner {
+.window-resize-zone-bottom-left {
     position: absolute;
 
     bottom: 0;
@@ -160,11 +160,11 @@ header {
     user-select: none;
 }
 
-.window-resize-zone-bottom-left-corner:hover {
+.window-resize-zone-bottom-left:hover {
     cursor: sw-resize;
 }
 
-.window-resize-zone-bottom-right-corner {
+.window-resize-zone-bottom-right {
     position: absolute;
 
     bottom: 0;
@@ -176,7 +176,7 @@ header {
     user-select: none;
 }
 
-.window-resize-zone-bottom-right-corner:hover {
+.window-resize-zone-bottom-right:hover {
     cursor: se-resize;
 }
 

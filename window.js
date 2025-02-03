@@ -3,6 +3,217 @@ var numberOfWorkspaces = 3;
 
 var allWindows = []; // by workspace, by order
 
+class Window {
+    // public
+    windowElement;
+    windowContent;
+    windowHeaderBar;
+
+    windowResizeZone = {};
+
+    minWidth = 100;   // Min width in pixels
+    minHeight = 100;  // Min height in pixels
+
+    // private
+    state = "UP";
+    x_down;
+    y_down;
+
+    x_offset;
+    y_offset;
+
+    width;
+    height;
+
+    deltaX;
+    deltaY;
+
+    resizeDown(event) {
+        this.x_down = event.clientX;
+        this.y_down = event.clientY;
+
+        this.x_offset = parseInt(this.windowElement.style.left) || 0;
+        this.y_offset = parseInt(this.windowElement.style.top) || 0;
+
+        this.width = this.windowContent.offsetWidth;
+        this.height = this.windowContent.offsetHeight;
+
+        currentWindow = this.windowElement;
+
+        setFocus(this.windowElement);
+    }
+
+    mouseQuit() {        
+        setTimeout(() => {
+            currentWindow = null;
+            this.state = "UP";
+            document.body.style.cursor = "default";
+        }, 200);
+    }
+
+    resizeLeft() {
+        const newLeft = this.x_offset + this.deltaX;
+        const newWidth = Math.max(this.width - this.deltaX, this.minWidth);
+        
+        this.windowElement.style.left = `${newLeft}px`;
+        this.windowContent.style.width = `${newWidth}px`;
+    }
+
+    resizeRight() {
+        const newWidth = Math.max(this.width + this.deltaX, this.minWidth);
+    
+        this.windowContent.style.width = `${newWidth}px`;
+    }
+
+    resizeTop() {
+        const newTop = this.y_offset + this.deltaY;
+        const newHeight = Math.max(this.height - this.deltaY, this.minHeight);
+        
+        this.windowElement.style.top = `${newTop}px`;
+        this.windowContent.style.height = `${newHeight}px`;
+    }
+
+    resizeBottom() {
+        const newHeight = Math.max(this.height + this.deltaY, this.minHeight);
+
+        this.windowContent.style.height = `${newHeight}px`;
+    }
+
+    constructor(title, color, workspace = currentWorkspace) {    
+        this.windowElement = document.createElement("div");
+        this.windowElement.classList.add("window");
+
+        this.windowContent = document.createElement("div");
+        this.windowContent.classList.add("window-content");
+    
+        this.windowHeaderBar = document.createElement("div");
+        this.windowHeaderBar.classList.add("window-header-bar", "prevent-select");
+        this.windowHeaderBar.textContent = title;
+    
+        this.windowContent.appendChild(this.windowHeaderBar);
+        this.windowContent.style.backgroundColor = color;
+    
+        for (let s of ["top", "bottom", "left", "right"]) {
+            this.windowResizeZone[s] = document.createElement("div");
+            this.windowResizeZone[s].classList.add(`window-resize-zone-${s}`);
+
+            this.windowResizeZone[s].addEventListener("mousedown", (event) => {
+                console.log(s);
+
+                this.resizeDown(event);
+                this.state = "RESIZE_" + s.toUpperCase();
+            });
+
+            this.windowElement.appendChild(this.windowResizeZone[s]);
+        }
+
+        // Corners
+        for (let tb of ["top", "bottom"]) {
+            for (let lr of ["left", "right"]) {
+                let s = `${tb}-${lr}`;
+                let s_underscore = `${tb}_${lr}`;
+                
+                this.windowResizeZone[s] = document.createElement("div");
+                this.windowResizeZone[s].classList.add(`window-resize-zone-${s}`);
+
+                this.windowResizeZone[s].addEventListener("mousedown", (event) => {
+                    console.log(s_underscore);
+
+                    this.resizeDown(event);
+                    this.state = "RESIZE_" + s_underscore.toUpperCase();
+                });
+
+                this.windowElement.appendChild(this.windowResizeZone[s]);
+            }
+        }
+
+        this.windowElement.appendChild(this.windowContent);
+
+        this.windowContent.addEventListener("mousedown", (event) => {
+            this.x_down = event.clientX;
+            this.y_down = event.clientY;
+    
+            this.x_offset = parseInt(this.windowElement.style.left) || 0;
+            this.y_offset = parseInt(this.windowElement.style.top) || 0;
+    
+            this.state = "DOWN";
+    
+            currentWindow = this.windowElement;
+            setFocus(this.windowElement);
+        });    
+
+        document.addEventListener("mousemove", (event) => {
+            if (currentWindow == this.windowElement) {
+                if (event.buttons != 1) {
+                    this.mouseQuit();
+                }
+                if (this.state == "DOWN") {
+                    this.windowElement.style.left = `${this.x_offset + (event.clientX - this.x_down)}px`;
+                    this.windowElement.style.top = `${this.y_offset + (event.clientY - this.y_down)}px`;
+                }
+                else if (this.state.startsWith("RESIZE")) {
+                    this.deltaX = event.clientX - this.x_down;
+                    this.deltaY = event.clientY - this.y_down;
+
+                    if (this.state == "RESIZE_LEFT") {
+                        this.resizeLeft();
+                        document.body.style.cursor = "w-resize";
+                    }
+                    else if (this.state == "RESIZE_RIGHT") {            
+                        this.resizeRight();
+                        document.body.style.cursor = "e-resize";
+                    }
+                    else if (this.state == "RESIZE_TOP") {          
+                        this.resizeTop();  
+                        document.body.style.cursor = "n-resize";
+                    }
+                    else if (this.state == "RESIZE_BOTTOM") {     
+                        this.resizeBottom();       
+                        document.body.style.cursor = "s-resize";
+                    }
+                    else if (this.state == "RESIZE_TOP_LEFT") {
+                        this.resizeTop();
+                        this.resizeLeft();
+                        document.body.style.cursor = "nw-resize";
+                    }
+                    else if (this.state == "RESIZE_TOP_RIGHT") {
+                        this.resizeTop();
+                        this.resizeRight();
+                        document.body.style.cursor = "ne-resize";
+                    }
+                    else if (this.state == "RESIZE_BOTTOM_LEFT") {
+                        this.resizeBottom();
+                        this.resizeLeft();
+                        document.body.style.cursor = "sw-resize";
+                    }
+                    else if (this.state == "RESIZE_BOTTOM_RIGHT") {
+                        this.resizeBottom();
+                        this.resizeRight();
+                        document.body.style.cursor = "se-resize";
+                    }
+                }
+            }
+        });
+
+        document.addEventListener("mouseup", (event) => {
+            this.mouseQuit();
+        });
+    
+        document.addEventListener("mouseleave", (event) => {
+            this.mouseQuit();
+        });
+    
+        if (workspace != currentWorkspace) {
+            hideWindow(this.windowElement);
+        }
+        
+        document.body.appendChild(this.windowElement);
+        allWindows[workspace].push(this.windowElement);
+    
+        setFocus(this.windowElement);
+    }
+}
+
 export function initWindows() {
     initWindowsStack();
     resetOrder();
@@ -16,266 +227,6 @@ function initWindowsStack() {
 }
 
 var currentWindow = null;
-
-export function createWindow(title, color, workspace = currentWorkspace) {
-    let window = document.createElement("div");
-    window.classList.add("window");
-
-    let windowContent = document.createElement("div");
-    windowContent.classList.add("window-content");
-
-    let windowResizeZoneTop = document.createElement("div");
-    windowResizeZoneTop.classList.add("window-resize-zone-top");
-
-    let windowResizeZoneBottom = document.createElement("div");
-    windowResizeZoneBottom.classList.add("window-resize-zone-bottom");
-
-    let windowResizeZoneLeft = document.createElement("div");
-    windowResizeZoneLeft.classList.add("window-resize-zone-left");
-
-    let windowResizeZoneRight = document.createElement("div");
-    windowResizeZoneRight.classList.add("window-resize-zone-right");
-
-    let windowResizeZoneTopLeftCorner = document.createElement("div");
-    windowResizeZoneTopLeftCorner.classList.add("window-resize-zone-top-left-corner");
-
-    let windowResizeZoneTopRightCorner = document.createElement("div");
-    windowResizeZoneTopRightCorner.classList.add("window-resize-zone-top-right-corner");
-
-    let windowResizeZoneBottomLeftCorner = document.createElement("div");
-    windowResizeZoneBottomLeftCorner.classList.add("window-resize-zone-bottom-left-corner");
-
-    let windowResizeZoneBottomRightCorner = document.createElement("div");
-    windowResizeZoneBottomRightCorner.classList.add("window-resize-zone-bottom-right-corner");
-
-    let windowHeaderBar = document.createElement("div");
-    windowHeaderBar.classList.add("window-header-bar", "prevent-select");
-    windowHeaderBar.textContent = title;
-
-    windowContent.appendChild(windowHeaderBar);
-    windowContent.style.backgroundColor = color;
-
-    // Events
-
-    let state = "UP";
-    let x_down;
-    let y_down;
-
-    let x_offset;
-    let y_offset;
-
-    let width;
-    let height;
-
-    function resizeDown(event) {
-        x_down = event.clientX;
-        y_down = event.clientY;
-
-        x_offset = parseInt(window.style.left) || 0;
-        y_offset = parseInt(window.style.top) || 0;
-
-        width = windowContent.offsetWidth;
-        height = windowContent.offsetHeight;
-
-        currentWindow = window;
-
-        setFocus(window);
-    }
-
-    function mouseQuit() {        
-        setTimeout(() => {
-            currentWindow = null;
-            state = "UP";
-            document.body.style.cursor = "default";
-        }, 200);
-    }
-
-    // Left event
-    windowResizeZoneLeft.addEventListener("mousedown", (event) => {
-        console.log("left");
-
-        resizeDown(event);
-        state = "RESIZE_LEFT";
-    });
-
-    windowResizeZoneRight.addEventListener("mousedown", (event) => {
-        console.log("right");
-       
-        resizeDown(event);
-        state = "RESIZE_RIGHT";
-    });
-
-    windowResizeZoneTop.addEventListener("mousedown", (event) => {
-        console.log("top");
-        
-        resizeDown(event);
-        state = "RESIZE_TOP";
-    });
-
-    windowResizeZoneBottom.addEventListener("mousedown", (event) => {
-        console.log("bottom");
-        
-        resizeDown(event);
-        state = "RESIZE_BOTTOM";
-    });
-
-    // Corners
-    windowResizeZoneTopLeftCorner.addEventListener("mousedown", (event) => {
-        console.log("top-left");
-        
-        resizeDown(event);
-        state = "RESIZE_TOP_LEFT";
-    });
-
-    windowResizeZoneTopRightCorner.addEventListener("mousedown", (event) => {
-        console.log("top-right");
-        
-        resizeDown(event);
-        state = "RESIZE_TOP_RIGHT";
-    });
-
-    windowResizeZoneBottomLeftCorner.addEventListener("mousedown", (event) => {
-        console.log("bottom-left");
-        
-        resizeDown(event);
-        state = "RESIZE_BOTTOM_LEFT";
-    });
-
-    windowResizeZoneBottomRightCorner.addEventListener("mousedown", (event) => {
-        console.log("bottom-right");
-        
-        resizeDown(event);
-        state = "RESIZE_BOTTOM_RIGHT";
-    });
-
-    windowContent.addEventListener("mousedown", (event) => {
-        x_down = event.clientX;
-        y_down = event.clientY;
-
-        x_offset = parseInt(window.style.left) || 0;
-        y_offset = parseInt(window.style.top) || 0;
-
-        state = "DOWN";
-
-        currentWindow = window;
-        setFocus(window);
-    });
-
-    document.addEventListener("mousemove", (event) => {
-        const minWidth = 100;   // Min width in pixels
-        const minHeight = 100;  // Min height in pixels
-
-        if (currentWindow == window) {
-            if (event.buttons != 1) {
-                mouseQuit();
-            }
-            if (state == "DOWN") {
-                window.style.left = `${x_offset + (event.clientX - x_down)}px`;
-                window.style.top = `${y_offset + (event.clientY - y_down)}px`;
-            }
-            else if (state.startsWith("RESIZE")) {
-                const deltaX = event.clientX - x_down;
-                const deltaY = event.clientY - y_down;
-
-                function resizeLeft() {
-                    const newLeft = x_offset + deltaX;
-                    const newWidth = Math.max(width - deltaX, minWidth);
-                    
-                    window.style.left = `${newLeft}px`;
-                    windowContent.style.width = `${newWidth}px`;
-                }
-
-                function resizeRight() {
-                    const newWidth = Math.max(width + deltaX, minWidth);
-                
-                    windowContent.style.width = `${newWidth}px`;
-                }
-
-                function resizeTop() {
-                    const newTop = y_offset + deltaY;
-                    const newHeight = Math.max(height - deltaY, minHeight);
-                    
-                    window.style.top = `${newTop}px`;
-                    windowContent.style.height = `${newHeight}px`;
-                }
-
-                function resizeBottom() {
-                    const newHeight = Math.max(height + deltaY, minHeight);
-    
-                    windowContent.style.height = `${newHeight}px`;
-                }
-    
-                if (state == "RESIZE_LEFT") {
-                    resizeLeft();
-                    document.body.style.cursor = "w-resize";
-                }
-                else if (state == "RESIZE_RIGHT") {            
-                    resizeRight();
-                    document.body.style.cursor = "e-resize";
-                }
-                else if (state == "RESIZE_TOP") {          
-                    resizeTop();  
-                    document.body.style.cursor = "n-resize";
-                }
-                else if (state == "RESIZE_BOTTOM") {     
-                    resizeBottom();       
-                    document.body.style.cursor = "s-resize";
-                }
-                else if (state == "RESIZE_TOP_LEFT") {
-                    resizeTop();
-                    resizeLeft();
-                    document.body.style.cursor = "nw-resize";
-                }
-                else if (state == "RESIZE_TOP_RIGHT") {
-                    resizeTop();
-                    resizeRight();
-                    document.body.style.cursor = "ne-resize";
-                }
-                else if (state == "RESIZE_BOTTOM_LEFT") {
-                    resizeBottom();
-                    resizeLeft();
-                    document.body.style.cursor = "sw-resize";
-                }
-                else if (state == "RESIZE_BOTTOM_RIGHT") {
-                    resizeBottom();
-                    resizeRight();
-                    document.body.style.cursor = "se-resize";
-                }
-            }
-        }
-    });
-
-    document.addEventListener("mouseup", (event) => {
-        mouseQuit();
-    });
-
-    document.addEventListener("mouseleave", (event) => {
-        mouseQuit();
-    });
-
-    if (workspace != currentWorkspace) {
-        hideWindow(window);
-    }
-    
-    window.appendChild(windowResizeZoneTop);
-    window.appendChild(windowResizeZoneBottom);
-    window.appendChild(windowResizeZoneLeft);
-    window.appendChild(windowResizeZoneRight);
-
-    window.appendChild(windowResizeZoneTopLeftCorner);
-    window.appendChild(windowResizeZoneTopRightCorner);
-    window.appendChild(windowResizeZoneBottomLeftCorner);
-    window.appendChild(windowResizeZoneBottomRightCorner);
-
-    window.appendChild(windowContent);
-
-    document.body.appendChild(window);
-    allWindows[workspace].push(window);
-
-    setFocus(window);
-    
-    return window;
-}
 
 function createWorkspaceIndicator(number) {
     let workspaceIndicator = document.createElement("button");
@@ -298,6 +249,10 @@ function hideWindow(window) {
 
 function showWindow(window) {
     window.style.visibility = "visible";
+}
+
+export function createWindow(title, color, workspace = currentWorkspace) {
+    return new Window(title, color, workspace);
 }
 
 export function changeWorkspace(newWorkspace) {
