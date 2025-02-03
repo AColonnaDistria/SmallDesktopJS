@@ -86,6 +86,7 @@ export function createWindow(title, color, workspace = currentWorkspace) {
         setTimeout(() => {
             currentWindow = null;
             state = "UP";
+            document.body.style.cursor = "default";
         }, 200);
     }
 
@@ -206,31 +207,39 @@ export function createWindow(title, color, workspace = currentWorkspace) {
     
                 if (state == "RESIZE_LEFT") {
                     resizeLeft();
+                    document.body.style.cursor = "w-resize";
                 }
                 else if (state == "RESIZE_RIGHT") {            
                     resizeRight();
+                    document.body.style.cursor = "e-resize";
                 }
                 else if (state == "RESIZE_TOP") {          
                     resizeTop();  
+                    document.body.style.cursor = "n-resize";
                 }
                 else if (state == "RESIZE_BOTTOM") {     
                     resizeBottom();       
+                    document.body.style.cursor = "s-resize";
                 }
                 else if (state == "RESIZE_TOP_LEFT") {
                     resizeTop();
                     resizeLeft();
+                    document.body.style.cursor = "nw-resize";
                 }
                 else if (state == "RESIZE_TOP_RIGHT") {
                     resizeTop();
                     resizeRight();
+                    document.body.style.cursor = "ne-resize";
                 }
                 else if (state == "RESIZE_BOTTOM_LEFT") {
                     resizeBottom();
                     resizeLeft();
+                    document.body.style.cursor = "sw-resize";
                 }
                 else if (state == "RESIZE_BOTTOM_RIGHT") {
                     resizeBottom();
                     resizeRight();
+                    document.body.style.cursor = "se-resize";
                 }
             }
         }
