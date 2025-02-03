@@ -52,8 +52,8 @@ class Window {
     }
 
     resizeLeft() {
-        const newLeft = this.x_offset + this.deltaX;
         const newWidth = Math.max(this.width - this.deltaX, this.minWidth);
+        const newLeft = this.x_offset + this.width - newWidth;
         
         this.windowElement.style.left = `${newLeft}px`;
         this.windowContent.style.width = `${newWidth}px`;
@@ -66,8 +66,8 @@ class Window {
     }
 
     resizeTop() {
-        const newTop = this.y_offset + this.deltaY;
         const newHeight = Math.max(this.height - this.deltaY, this.minHeight);
+        const newTop = this.y_offset + this.height - newHeight;
         
         this.windowElement.style.top = `${newTop}px`;
         this.windowContent.style.height = `${newHeight}px`;
