@@ -3,7 +3,7 @@ html {
 }
 
 body {
-    background-image: url("http://localhost:8888/files/background.png");
+    background-image: url("/background.png");
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center center;

@@ -1,4 +1,4 @@
-import * as windowManager from "http://localhost:8888/files/window.js";
+import * as windowManager from "/window.js";
 
 var dockButtonNewWindow = document.getElementById("dockButtonNewWindow");
 

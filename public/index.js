@@ -1,5 +1,5 @@
-import * as windowManager from "http://localhost:8888/files/window.js";
-import * as dock from "http://localhost:8888/files/dock.js";
+import * as windowManager from "/window.js";
+import * as dock from "/dock.js";
 
 init();
 

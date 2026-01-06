@@ -14,6 +14,9 @@ class Window {
     minWidth = 100;   // Min width in pixels
     minHeight = 100;  // Min height in pixels
 
+    title;
+    color;
+
     // private
     state = "UP";
     x_down;
@@ -80,6 +83,9 @@ class Window {
     }
 
     constructor(title, color, workspace = currentWorkspace) {    
+        this.title = title;
+        this.color = color;
+
         this.windowElement = document.createElement("div");
         this.windowElement.classList.add("window");
 
