@@ -7,3 +7,7 @@ node server.js
 ```
 
 and open a browser at http://localhost:8888/
+
+## Demo
+
+[![Watch the video](https://img.youtube.com/vi/RUHlMV7sK0M/maxresdefault.jpg)](https://youtu.be/RUHlMV7sK0M)
